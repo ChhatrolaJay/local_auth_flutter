@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_flutter/local_auth_cubit.dart';
+part 'local_auth_options.dart';
 
 ///Meditab Software Inc. CONFIDENTIAL
 ///__________________
@@ -44,9 +45,9 @@ class LocalAuthWidget extends StatefulWidget {
   const LocalAuthWidget(
       {super.key,
       required this.localAuthListener,
-      this.authenticationOptions,
       this.displayTitle,
-      this.widgetBuilder});
+      this.widgetBuilder,
+      this.isBiometricOnly});
 
   /// This function takes the listener function so it just use for
   /// handle navigation purpose in your application.
@@ -59,7 +60,7 @@ class LocalAuthWidget extends StatefulWidget {
       Function() startAuthFunction)? widgetBuilder;
 
   /// This parameter takes the custom options for the authentications.
-  final AuthenticationOptions? authenticationOptions;
+  final bool? isBiometricOnly;
 
   /// You can also pass what title should be displayed
   /// on the dialog of authentication.
@@ -98,7 +99,10 @@ class _LocalAuthWidgetState extends State<LocalAuthWidget> {
                     ? null
                     : () {
                         _localAuthCubit.startBiometricAuth(
-                            authenticationOptions: widget.authenticationOptions,
+                            authenticationOptions:
+                                (widget.isBiometricOnly ?? false)
+                                    ? RootLocalAuthOptions.biometricOnlyOption
+                                    : const AuthenticationOptions(),
                             displayTitle: widget.displayTitle);
                       },
                 child: (widget.widgetBuilder != null)
@@ -120,7 +124,9 @@ class _LocalAuthWidgetState extends State<LocalAuthWidget> {
     Widget authWidget = widget.widgetBuilder!(
         context, _localAuthCubit.isFaceIdOnly ?? false, () {
       _localAuthCubit.startBiometricAuth(
-          authenticationOptions: widget.authenticationOptions,
+          authenticationOptions: (widget.isBiometricOnly ?? false)
+              ? RootLocalAuthOptions.biometricOnlyOption
+              : const AuthenticationOptions(),
           displayTitle: widget.displayTitle);
     });
 
