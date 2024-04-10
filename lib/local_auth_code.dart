@@ -43,15 +43,15 @@ class LocalAuthWidget extends StatefulWidget {
   /// - [displayTitle] specifies the title to be displayed on the authentication dialog.
   const LocalAuthWidget(
       {super.key,
-        required this.localAuthListener,
-        this.authenticationOptions,
-        this.displayTitle,
-        this.widgetBuilder});
+      required this.localAuthListener,
+      this.authenticationOptions,
+      this.displayTitle,
+      this.widgetBuilder});
 
   /// This function takes the listener function so it just use for
   /// handle navigation purpose in your application.
   final void Function(BuildContext context, LocalAuthState localAuthState)
-  localAuthListener;
+      localAuthListener;
 
   /// This feature is optional as you need to add your custom widget
   /// and to use the generic authentication this will be useful.
@@ -94,20 +94,22 @@ class _LocalAuthWidgetState extends State<LocalAuthWidget> {
       builder: (context, state) {
         return state is! BiometricNotSupportedState
             ? InkWell(
-            onTap: () {
-              _localAuthCubit.startBiometricAuth(
-                  authenticationOptions: widget.authenticationOptions,
-                  displayTitle: widget.displayTitle);
-            },
-            child: (widget.widgetBuilder != null)
-                ? _getWidgetFromBuilder()
-                : Icon(
-              (_localAuthCubit.isFaceIdOnly ?? false)
-                  ? Icons.face
-                  : Icons.fingerprint,
-              size: 30,
-              color: Colors.black,
-            ))
+                onTap: widget.widgetBuilder != null
+                    ? null
+                    : () {
+                        _localAuthCubit.startBiometricAuth(
+                            authenticationOptions: widget.authenticationOptions,
+                            displayTitle: widget.displayTitle);
+                      },
+                child: (widget.widgetBuilder != null)
+                    ? _getWidgetFromBuilder()
+                    : Icon(
+                        (_localAuthCubit.isFaceIdOnly ?? false)
+                            ? Icons.face
+                            : Icons.fingerprint,
+                        size: 30,
+                        color: Colors.black,
+                      ))
             : const SizedBox.shrink();
       },
     );
@@ -127,4 +129,3 @@ class _LocalAuthWidgetState extends State<LocalAuthWidget> {
     );
   }
 }
-

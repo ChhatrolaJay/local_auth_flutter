@@ -21,8 +21,14 @@ class LocalAuthCubit extends Cubit<LocalAuthState> {
     try {
       /// method will get the available biometrics of the given device.
       biometricTypes = await _localAuth.getAvailableBiometrics();
-      isFaceIdOnly = !biometricTypes.contains(BiometricType.strong);
-      emit(BiometricSupportedState());
+      bool canCheckBiometric = await _localAuth.canCheckBiometrics;
+      if(biometricTypes.isEmpty || !canCheckBiometric){
+        emit(BiometricNotSupportedState());
+      } else{
+        isFaceIdOnly = !biometricTypes.contains(BiometricType.strong);
+        emit(BiometricSupportedState());
+      }
+
     } on PlatformException catch (e) {
       debugPrint('Error occurred ${e.message}');
     }
